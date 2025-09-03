@@ -21,7 +21,7 @@ constexpr unsigned int hashStr(const char* str, unsigned int hash = 5381) {
 namespace fs = std::filesystem;
 using namespace std;
 
-string version = "v1-0";
+string version = "v1.0";
 
 
 int main(int argc, char** argv) {
