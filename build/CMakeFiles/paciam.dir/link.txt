@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/paciam.dir/link.d CMakeFiles/paciam.dir/src/main.cpp.o -o paciam

@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/jacob/Programming/paciam-main/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
