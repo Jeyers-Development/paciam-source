@@ -13,6 +13,7 @@
 #include <string>
 #include <cstring>
 #include <filesystem>
+#include "main.h"
 
 constexpr unsigned int hashStr(const char* str, unsigned int hash = 5381) {
     return *str ? hashStr(str + 1, ((hash << 5) + hash) + *str) : hash;
@@ -20,13 +21,15 @@ constexpr unsigned int hashStr(const char* str, unsigned int hash = 5381) {
 namespace fs = std::filesystem;
 using namespace std;
 
+string version = "v1-0";
+
 
 int main(int argc, char** argv) {
     string home_dir = getenv("HOME");
     fs::create_directory(home_dir + "/paciam/");
     fs::create_directory(home_dir + "/paciam/packages/");
 
-    if (argc <= 2 || argc > 3){
+    if (argc <= 2){
 
         cout << "  ________  ________  ________  ___  ________  _____ ______        \n";
         cout << " |\\   __  \\|\\   __  \\|\\   ____\\|\\  \\|\\   __  \\|\\   _ \\  _   \\      \n";
@@ -35,38 +38,46 @@ int main(int argc, char** argv) {
         cout << "   \\ \\  \\___|\\ \\  \\ \\  \\ \\  \\____\\ \\  \\ \\  \\ \\  \\ \\  \\    \\ \\  \\   \n";
         cout << "    \\ \\__\\    \\ \\__\\ \\__\\ \\_______\\ \\__\\ \\__\\ \\__\\ \\__\\    \\ \\__\\  \n";
         cout << "     \\|__|     \\|__|\\|__|\\|_______|\\|__|\\|__|\\|__|\\|__|     \\|__|  \n";
-        
+        cout << "\n\n\n" <<
+            "paciam " << version << endl;
+        cout << "usage:  paciam <operation> <package(s)>\n";
+        cout << helpString << endl;
         return(0);
     }
 
-    string mode = argv[1];
-    string packageId = argv[2];
+    string operation = argv[1];
 
-    string packagePath = home_dir + "/paciam/packages/"+packageId;
-
-    switch (hashStr(argv[1])) {
+    switch (hashStr(operation.c_str())) {
         case hashStr("-S"): {
-            if (fs::is_directory(packagePath)) fs::remove_all(packagePath);
+            for (int i = 2; i < argc; i++){
+                string packagePath = home_dir + "/paciam/packages/"+argv[i];
 
-            fs::remove_all(packagePath.c_str());
+                if (fs::is_directory(packagePath)) fs::remove_all(packagePath);
 
-            string gitcommand = 
-                "git clone https://aur.archlinux.org/"+packageId+".git " + packagePath + " > /dev/null 2>&1";
-            system(gitcommand.c_str());
-                string installcommand =
-                "cd " + packagePath +
-                    "; makepkg -si";
-            system(installcommand.c_str());
+                fs::remove_all(packagePath.c_str());
+
+                string gitcommand = 
+                    "git clone https://aur.archlinux.org/"+(string)argv[i]+".git " + packagePath + " > /dev/null 2>&1";
+                system(gitcommand.c_str());
+                    string installcommand =
+                    "cd " + packagePath +
+                        "; makepkg -si";
+                system(installcommand.c_str());
+            }
             break;
         }
         case hashStr("-R"): {
-            if (fs::is_directory(packagePath)) { 
-                string removecommand = "sudo pacman -R " + packageId;
-                system(removecommand.c_str());
-                fs::remove_all(packagePath); 
-            }
-            else {
-                cerr << "error: target not found: " + packageId << endl; 
+            for (int i = 2; i < argc; i++){
+                string packagePath = home_dir + "/paciam/packages/"+argv[i];
+
+                if (fs::is_directory(packagePath)) { 
+                    string removecommand = "sudo pacman -R " + (string)argv[i];
+                    system(removecommand.c_str());
+                    fs::remove_all(packagePath); 
+                }
+                else {
+                    cerr << "error: target not found: " + (string)argv[i]<< endl; 
+                }
             }
             break;
         }

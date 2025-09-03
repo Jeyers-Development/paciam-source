@@ -3,6 +3,7 @@
 
 CMakeFiles/paciam.dir/src/main.cpp.o
  /home/jacob/Programming/paciam-main/src/main.cpp
+ /home/jacob/Programming/paciam-main/src/main.h
  /usr/include/alloca.h
  /usr/include/asm-generic/bitsperlong.h
  /usr/include/asm-generic/errno-base.h
